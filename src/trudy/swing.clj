@@ -9,7 +9,4 @@
     (.setPreferredSize panel (Dimension. width height))
     (.add panel canvas)
     (.pack frame)
-    (.createBufferStrategy canvas 2)
-    (.setIgnoreRepaint canvas true)
-    (.requestFocus canvas)
     (.setVisible frame true)))
