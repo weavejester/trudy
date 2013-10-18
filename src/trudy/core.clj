@@ -1,14 +1,22 @@
 (ns trudy.core
-  (:import [java.awt Canvas Graphics2D])
+  (:import [java.awt Canvas Color Graphics2D RenderingHints])
   (:require [trudy.swing :as swing]))
 
 (defn- frame-sleep-time [frame-start frame-length]
   (let [duration (- (System/currentTimeMillis) frame-start)]
     (max 0 (- frame-length duration))))
 
+(defn- clear-canvas! [^Canvas canvas ^Graphics2D graphics]
+  (let [w (.getWidth canvas)
+        h (.getHeight canvas)]
+    (.setColor graphics Color/white)
+    (.fillRect graphics 0 0 w h)
+    (.setColor graphics Color/black)))
+
 (defn paint-canvas [canvas painter]
   (let [strategy (.getBufferStrategy canvas)
         graphics (.getDrawGraphics strategy)]
+    (clear-canvas! canvas graphics)
     (painter graphics)
     (.dispose graphics)
     (.show strategy)))
