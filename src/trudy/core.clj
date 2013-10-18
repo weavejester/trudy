@@ -1,9 +1,11 @@
 (ns trudy.core
-  (:import [java.awt Graphics2D])
+  (:import [java.awt Canvas Graphics2D])
   (:require [trudy.swing :as swing]))
 
-(defn draw-example [^Graphics2D graphics]
-  (.drawString graphics "Hello World" 10 10))
-
 (defn -main [& args]
-  (swing/frame "Demo" [200 200] draw-example))
+  (let [canvas (Canvas.)]
+    (swing/window "Demo" [200 200] canvas)
+    (let [strategy (.getBufferStrategy canvas)
+          graphics (.getDrawGraphics strategy)]
+      (.drawString graphics "Hello World" 10 10)
+      (.show strategy))))
