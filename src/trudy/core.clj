@@ -6,6 +6,10 @@
   (let [duration (- (System/currentTimeMillis) frame-start)]
     (max 0 (- frame-length duration))))
 
+(defn- set-font-hints! [^Graphics2D g]
+  (.setRenderingHint g RenderingHints/KEY_TEXT_ANTIALIASING
+                       RenderingHints/VALUE_TEXT_ANTIALIAS_GASP))
+
 (defn- clear-canvas! [^Canvas canvas ^Graphics2D graphics]
   (let [w (.getWidth canvas)
         h (.getHeight canvas)]
@@ -16,6 +20,7 @@
 (defn paint-canvas [canvas painter]
   (let [strategy (.getBufferStrategy canvas)
         graphics (.getDrawGraphics strategy)]
+    (set-font-hints! graphics)
     (clear-canvas! canvas graphics)
     (painter graphics)
     (.dispose graphics)
