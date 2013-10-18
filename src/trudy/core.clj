@@ -6,22 +6,25 @@
   (let [duration (- (System/currentTimeMillis) frame-start)]
     (max 0 (- frame-length duration))))
 
-(defn game-loop
-  ([canvas handler]
-     (game-loop canvas handler 60))
-  ([canvas handler fps]
+(defn paint-canvas [canvas painter]
+  (let [strategy (.getBufferStrategy canvas)
+        graphics (.getDrawGraphics strategy)]
+    (painter graphics)
+    (.dispose graphics)
+    (.show strategy)))
+
+(defn paint-loop
+  ([canvas painter]
+     (paint-loop canvas painter 60))
+  ([canvas painter fps]
      (let [frame-length (/ 1000.0 fps)]
        (loop [time-prev nil]
-         (let [time-start (System/currentTimeMillis)
-               strategy   (.getBufferStrategy canvas)
-               graphics   (.getDrawGraphics strategy)]
-           (handler graphics)
-           (.dispose graphics)
-           (.show strategy)
+         (let [time-start (System/currentTimeMillis)]
+           (paint-canvas canvas painter)
            (Thread/sleep (frame-sleep-time time-start frame-length))
            (recur time-start))))))
 
-(defn window [title size handler]
+(defn window [title size painter]
   (let [canvas (Canvas.)]
     (swing/window title size canvas)
     (doto canvas
@@ -29,7 +32,7 @@
       (.setIgnoreRepaint true)
       (.requestFocus))
     (future
-      (game-loop canvas handler 60))))
+      (paint-loop canvas painter 60))))
 
 (defn hello-world [^Graphics2D graphics]
   (.drawString graphics "Hello World" 10 10))
