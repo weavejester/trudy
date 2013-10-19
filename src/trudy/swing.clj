@@ -3,9 +3,11 @@
   (:import [javax.swing JFrame JPanel]
            [java.awt Dimension Canvas Color Graphics2D RenderingHints]))
 
+(defn canvas-size [^Canvas canvas]
+  [(.getWidth canvas) (.getHeight canvas)])
+
 (defn- clear-canvas! [^Canvas canvas ^Graphics2D graphics]
-  (let [w (.getWidth canvas)
-        h (.getHeight canvas)]
+  (let [[w h] (canvas-size canvas)]
     (.setColor graphics Color/white)
     (.fillRect graphics 0 0 w h)
     (.setColor graphics Color/black)))
@@ -19,7 +21,7 @@
         graphics (.getDrawGraphics strategy)]
     (set-font-hints! graphics)
     (clear-canvas! canvas graphics)
-    (painter graphics)
+    (painter graphics (canvas-size canvas))
     (.dispose graphics)
     (.show strategy)))
 
