@@ -54,4 +54,6 @@
       (.setIgnoreRepaint true)
       (.requestFocus))
     (future
-      (paint-loop canvas painter 60))))
+      (try
+        (paint-loop canvas painter 60)
+        (catch Exception ex (prn ex))))))
