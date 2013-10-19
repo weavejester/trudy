@@ -2,7 +2,7 @@
   (:import java.awt.Graphics2D)
   (:require [crumpets.core :as color]
             [trudy.swing :as swing]
-            [trudy.types :as t]
+            [trudy.ui :as ui]
             [trudy.graphics :as g]))
 
 (defn painter [layout]
@@ -10,7 +10,7 @@
     (g/render layout graphics 0 0 w h)))
 
 (def hello-world
-  #trudy/rect {:color #color/rgb "#ff0000"})
+  #trudy.ui/rect {:color #color/rgb "#ff0000"})
 
 (defn -main [& args]
   (swing/run-app (painter hello-world)

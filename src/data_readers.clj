@@ -1,2 +1,2 @@
-{trudy/text trudy.types/map->Text
- trudy/rect trudy.types/map->Rect}
+{trudy.ui/text trudy.ui/map->Text
+ trudy.ui/rect trudy.ui/map->Rect}

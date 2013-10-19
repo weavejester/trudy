@@ -1,4 +1,4 @@
-(ns trudy.types)
+(ns trudy.ui)
 
 (defrecord Text [content color])
 
