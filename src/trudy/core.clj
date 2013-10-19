@@ -6,8 +6,8 @@
             [trudy.graphics :as g]))
 
 (defn hello-world [^Graphics2D graphics]
-  (g/render #trudy/text {:content "Hello World" :color #color/rgb "#ff0000"}
-            graphics 10 10 100 40))
+  (g/render #trudy/rect {:color #color/rgb "#ff0000"}
+            graphics 0 0 200 200))
 
 (defn -main [& args]
   (swing/run-app hello-world {:title "Demo" :size [200 200]}))
