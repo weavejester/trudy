@@ -4,10 +4,11 @@
 (defn- camel-case [s]
   (apply str (map str/capitalize (str/split s #"-"))))
 
-(defmacro defcomponent [name keys]
+(defmacro defcomponent [name keys & body]
   (let [class-name (symbol (camel-case (str name)))
         map->name  (symbol (str "map->" class-name))]
     `(defrecord ~class-name ~keys
+       ~@body
        Object
        (toString [r#]
          (str "#" (ns-name *ns*) "/" ~(str name) " " (pr-str (into {} r#)))))))
