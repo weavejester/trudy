@@ -58,4 +58,6 @@
     (future
       (try
         (paint-loop canvas painter 60)
-        (catch Exception ex (prn ex))))))
+        (catch Exception ex
+          (prn ex)
+          (.printStackTrace ex))))))
