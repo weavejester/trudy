@@ -7,7 +7,7 @@
 (defcomponent v-box [content]
   Layout
   (child-regions [_ [x y w h]]
-    (let [ch (/ h (count content))]
+    (let [ch (int (/ h (count content)))]
       (map-indexed
        (fn [i child] [[x (+ y (* i ch)) w ch] child])
        content))))
