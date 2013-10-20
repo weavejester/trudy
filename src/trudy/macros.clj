@@ -1,8 +1,11 @@
 (ns trudy.macros
   (:require [clojure.string :as str]))
 
+(defn- camel-case [s]
+  (apply str (map str/capitalize (str/split s #"-"))))
+
 (defmacro defcomponent [name keys]
-  (let [class-name (symbol (str/capitalize (str name)))
+  (let [class-name (symbol (camel-case (str name)))
         map->name  (symbol (str "map->" class-name))]
     `(defrecord ~class-name ~keys
        Object
