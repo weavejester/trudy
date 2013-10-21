@@ -4,10 +4,14 @@
 (defprotocol Layout
   (child-regions [layout parent-region]))
 
-(defcomponent v-box [content]
+(defrecord VBox [content]
   Layout
   (child-regions [_ [x y w h]]
     (let [ch (int (/ h (count content)))]
       (map-indexed
        (fn [i child] [[x (+ y (* i ch)) w ch] child])
-       content))))
+       content)))
+  Object
+  (toString [_] (str "#trudy.layout/vbox " (vec content))))
+
+(set-print-methods! VBox)
