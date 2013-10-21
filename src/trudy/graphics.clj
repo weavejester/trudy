@@ -21,6 +21,11 @@
     (set-color graphics (:color rect))
     (.fillRect graphics x y w h))
 
+  trudy.layout.Overlay
+  (render [overlay graphics x y w h]
+    (doseq [[[x y w h] child] (layout/child-regions overlay [x y w h])]
+      (render child graphics x y w h)))
+
   trudy.layout.VBox
   (render [v-box graphics x y w h]
     (doseq [[[x y w h] child] (layout/child-regions v-box [x y w h])]

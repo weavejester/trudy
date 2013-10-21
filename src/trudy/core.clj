@@ -11,9 +11,9 @@
     (g/render layout graphics 0 0 w h)))
 
 (def hello-world
-  #trudy.layout/v-box [
-    #trudy.ui/text {:color #color/rgb "#000000" :content "Hello World"}
-    #trudy.ui/rect {:color #color/rgb "#ff0000"}])
+  #trudy.layout/overlay [
+    #trudy.ui/rect {:color #color/rgb "#ff0000"}
+    #trudy.ui/text {:color #color/rgb "#ffffff" :content "Hello World"}])
 
 (defn -main [& args]
   (swing/run-app (painter hello-world)
