@@ -9,7 +9,7 @@
   (child-regions [_ region]
     (for [child content] [region child]))
   Object
-  (toString [_] (str "#trudy.layout/overlay " (vec content))))
+  (toString [_] (str "#trudy.layout/overlay " (pr-str (vec content)))))
 
 (defrecord VBox [content]
   Layout
@@ -19,7 +19,7 @@
        (fn [i child] [[x (+ y (* i ch)) w ch] child])
        content)))
   Object
-  (toString [_] (str "#trudy.layout/vbox " (vec content))))
+  (toString [_] (str "#trudy.layout/vbox " (pr-str (vec content)))))
 
 (set-print-methods! Overlay)
 (set-print-methods! VBox)
