@@ -14,4 +14,5 @@
 
 (defn show [entity]
   (let [canvas (swing/window-canvas {:title "REPL" :size [400 400]})]
+    (Thread/sleep 50)
     (g/paint canvas entity)))
