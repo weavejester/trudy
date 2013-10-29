@@ -7,6 +7,12 @@
 (defprotocol Renderable
   (render [entity ^Graphics2D graphics x y w h]))
 
+(defprotocol Canvas
+  (paint* [canvas painter]))
+
+(defn paint [canvas entity]
+  (paint* canvas (fn [g [w h]] (render entity g 0 0 w h))))
+
 (defn- set-color [graphics color]
   (.setColor graphics (color/awt-color color)))
 

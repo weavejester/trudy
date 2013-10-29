@@ -6,13 +6,6 @@
             [trudy.layout :as layout]
             [trudy.graphics :as g]))
 
-(defn painter [layout]
-  (let [prev (atom nil)]
-    (fn [graphics [w h]]
-      (when (not= @prev [layout w h])
-        (g/render layout graphics 0 0 w h)
-        (reset! prev [layout w h])))))
-
 (def hello-world
   #trudy.layout/vbox [
     #trudy.layout/overlay [
@@ -21,5 +14,5 @@
     #trudy.ui/rect {:color #color/rgb "#0000ff"}])
 
 (defn -main [& args]
-  (swing/run-app (painter hello-world)
-                 {:title "Demo" :size [200 200]}))
+  (let [canvas (swing/window-canvas {:title "Demo" :size [200 200]})]
+    (g/paint canvas hello-world)))
