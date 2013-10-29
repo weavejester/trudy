@@ -19,6 +19,10 @@
     (.dispose graphics)
     (.show strategy)))
 
+(extend-type Canvas
+  graphics/Canvas
+  (paint* [canvas painter] (paint-canvas canvas painter)))
+
 (defn- frame [title [width height] canvas]
   (let [frame (JFrame. title)
         panel (.getContentPane frame)]
@@ -33,7 +37,4 @@
     (doto canvas
       (.createBufferStrategy 2)
       (.setIgnoreRepaint true)
-      (.requestFocus))
-    (reify graphics/Canvas
-      (paint* [_ painter]
-        (paint-canvas canvas painter)))))
+      (.requestFocus))))
