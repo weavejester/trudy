@@ -6,12 +6,6 @@
 (defn canvas-size [^Canvas canvas]
   [(.getWidth canvas) (.getHeight canvas)])
 
-(defn- clear-canvas! [^Canvas canvas ^Graphics2D graphics]
-  (let [[w h] (canvas-size canvas)]
-    (.setColor graphics Color/white)
-    (.fillRect graphics 0 0 w h)
-    (.setColor graphics Color/black)))
-
 (defn- set-font-hints! [^Graphics2D g]
   (.setRenderingHint g RenderingHints/KEY_TEXT_ANTIALIASING
                        RenderingHints/VALUE_TEXT_ANTIALIAS_GASP))
@@ -20,7 +14,6 @@
   (let [strategy (.getBufferStrategy canvas)
         graphics (.getDrawGraphics strategy)]
     (set-font-hints! graphics)
-    (clear-canvas! canvas graphics)
     (painter graphics (canvas-size canvas))
     (.dispose graphics)
     (.show strategy)))
