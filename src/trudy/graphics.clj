@@ -1,6 +1,6 @@
 (ns trudy.graphics
   (:import [java.awt Font Graphics2D]
-           [java.awt.font TextLayout])
+           [java.awt.font FontRenderContext TextLayout])
   (:require [crumpets.core :as color]
             [trudy.layout :as layout]
             trudy.ui))
@@ -22,15 +22,22 @@
    :bold   Font/BOLD
    :italic Font/ITALIC})
 
-(defn- font [{:keys [family style size]
-              :or   {family "SansSerif", style :plain, size 10}}]
+(defn- font
+  [{:keys [family style size] :or {family "SansSerif", style :plain, size 10}}]
   (Font. family (font-styles style) size))
 
+(defn- font-render-context [^Font font]
+  (FontRenderContext. (.getTransform font) (boolean true) (boolean true)))
+
+(defn- text-size [^String content ^Font font]
+  (let [layout (TextLayout. content font (font-render-context font))
+        bounds (.getBounds layout)]
+    [(int (.getWidth bounds)) (int (.getHeight bounds))]))
+
 (defn- draw-text [^Graphics2D graphics content font [x y]]
-  (let [context (.getFontRenderContext graphics)
-        layout  (TextLayout. content font context)
-        bounds  (.getBounds layout)]
-    (.draw layout graphics x (+ y (.getHeight bounds)))))
+  (let [[w h] (text-size content font)]
+    (.setFont graphics font)
+    (.drawString graphics content x (+ y h))))
 
 (extend-protocol Renderable
   trudy.ui.Text
