@@ -5,6 +5,4 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [crumpets "0.1.3"]]
-  :profiles
-  {:dev {:source-paths ["dev"]
-         :repl-options {:init-ns trudy.repl}}})
+  :profiles {:dev {:source-paths ["dev"]}})
