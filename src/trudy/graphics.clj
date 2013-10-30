@@ -1,5 +1,6 @@
 (ns trudy.graphics
-  (:import [java.awt Font Graphics2D])
+  (:import [java.awt Font Graphics2D]
+           [java.awt.font TextLayout])
   (:require [crumpets.core :as color]
             [trudy.layout :as layout]
             trudy.ui))
@@ -25,15 +26,17 @@
               :or   {family "SansSerif", style :plain, size 10}}]
   (Font. family (font-styles style) size))
 
-(defn- set-font [^Graphics2D graphics font-attrs]
-  (.setFont graphics (font font-attrs)))
+(defn- draw-text [^Graphics2D graphics content font [x y]]
+  (let [context (.getFontRenderContext graphics)
+        layout  (TextLayout. content font context)
+        bounds  (.getBounds layout)]
+    (.draw layout graphics x (+ y (.getHeight bounds)))))
 
 (extend-protocol Renderable
   trudy.ui.Text
   (render [text graphics x y w h]
     (set-color graphics (:color text))
-    (set-font graphics (:font text))
-    (.drawString graphics (:content text) x (+ y 10)))
+    (draw-text graphics (:content text) (font (:font text)) [x y]))
 
   trudy.ui.Rect
   (render [rect graphics x y w h]
