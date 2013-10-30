@@ -2,7 +2,7 @@
   "Visible user interface components."
   (:require [trudy.macros :refer :all]))
 
-(defrecord Text [content color]
+(defrecord Text [content color font]
   Object
   (toString [r] (str "#trudy.ui/text " (pr-str (into {} r)))))
 

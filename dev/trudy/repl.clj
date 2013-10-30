@@ -9,7 +9,9 @@
   #trudy.layout/vbox [
     #trudy.layout/overlay [
       #trudy.ui/rect {:color #color/rgb "#ff0000"}
-      #trudy.ui/text {:color #color/rgb "#ffffff" :content "Hello World"}]
+      #trudy.ui/text {:color #color/rgb "#ffffff"
+                      :font {:family "Times" :size 20 :style :italic}
+                      :content "Hello World"}]
     #trudy.ui/rect {:color #color/rgb "#0000ff"}])
 
 (defn show [entity]
