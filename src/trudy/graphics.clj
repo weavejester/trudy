@@ -7,13 +7,13 @@
             trudy.ui))
 
 (defprotocol Renderable
-  (render [entity ^Graphics2D graphics x y w h]))
+  (render [entity ^Graphics2D graphics region]))
 
 (defprotocol Canvas
   (paint* [canvas painter]))
 
 (defn paint [canvas entity]
-  (paint* canvas (fn [g [w h]] (render entity g 0 0 w h))))
+  (paint* canvas (fn [g [w h]] (render entity g [0 0 w h]))))
 
 (defn- set-color [^Graphics2D graphics color]
   (.setColor graphics (color/awt-color color)))
@@ -23,28 +23,29 @@
     (.setFont graphics (font/awt-font font))
     (.drawString graphics content x (+ y h))))
 
+(defn- render-layout [layout graphics region]
+  (doseq [[region child] (layout/child-regions layout region)]
+    (render child graphics region)))
+
 (extend-protocol Renderable
   trudy.ui.Text
-  (render [text graphics x y w h]
+  (render [text graphics [x y _ _]]
     (set-color graphics (:color text))
     (draw-text graphics (:content text) (:font text) [x y]))
 
   trudy.ui.Rect
-  (render [rect graphics x y w h]
+  (render [rect graphics [x y w h]]
     (set-color graphics (:color rect))
     (.fillRect graphics x y w h))
 
   trudy.layout.Overlay
-  (render [overlay graphics x y w h]
-    (doseq [[[x y w h] child] (layout/child-regions overlay [x y w h])]
-      (render child graphics x y w h)))
+  (render [layout graphics region]
+    (render-layout layout graphics region))
 
   trudy.layout.VBox
-  (render [v-box graphics x y w h]
-    (doseq [[[x y w h] child] (layout/child-regions v-box [x y w h])]
-      (render child graphics x y w h)))
+  (render [layout graphics region]
+    (render-layout layout graphics region))
 
   trudy.layout.Center
-  (render [center graphics x y w h]
-    (doseq [[[x y w h] child] (layout/child-regions center [x y w h])]
-      (render child graphics x y w h))))
+  (render [layout graphics region]
+    (render-layout layout graphics region)))
