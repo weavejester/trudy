@@ -1,9 +1,6 @@
 (ns trudy.repl
   "Utility functions for REPL-based development."
-  (:require [crumpets.core :as color]
-            [trudy.swing :as swing]
-            [trudy.ui :as ui]
-            [trudy.layout :as layout]
+  (:require [trudy.swing :as swing]
             [trudy.graphics :as g]))
 
 (defn show
