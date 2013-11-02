@@ -11,17 +11,15 @@
   (.setRenderingHint g RenderingHints/KEY_TEXT_ANTIALIASING
                        RenderingHints/VALUE_TEXT_ANTIALIAS_GASP))
 
-(defn- paint-canvas [canvas painter]
-  (let [strategy (.getBufferStrategy canvas)
-        graphics (.getDrawGraphics strategy)]
-    (set-font-hints! graphics)
-    (painter graphics (canvas-size canvas))
-    (.dispose graphics)
-    (.show strategy)))
-
 (extend-type Canvas
   graphics/Canvas
-  (paint* [canvas painter] (paint-canvas canvas painter)))
+  (paint* [canvas painter]
+    (let [strategy (.getBufferStrategy canvas)
+          graphics (.getDrawGraphics strategy)]
+      (set-font-hints! graphics)
+      (painter graphics (canvas-size canvas))
+      (.dispose graphics)
+      (.show strategy))))
 
 (defn- frame [title [width height] canvas]
   (let [frame (JFrame. title)
