@@ -41,6 +41,15 @@
   Object
   (toString [_] (str "#trudy.layout/center " (pr-str (vec content)))))
 
+(defn overlay [& elements]
+  (Overlay. (vec elements)))
+
+(defn vbox [& elements]
+  (VBox. (vec elements)))
+
+(defn center [& elements]
+  (Center. (vec elements)))
+
 (set-print-methods! Overlay)
 (set-print-methods! VBox)
 (set-print-methods! Center)

@@ -16,5 +16,11 @@
   Object
   (toString [r] (str "#trudy.ui/rect " (pr-str (into {} r)))))
 
+(defn text [& {:as options}]
+  (map->Text options))
+
+(defn rect [& {:as options}]
+  (map->Rect options))
+
 (set-print-methods! Text)
 (set-print-methods! Rect)
