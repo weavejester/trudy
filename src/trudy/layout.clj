@@ -19,22 +19,24 @@
 (defrecord VBox [content]
   Layout
   (child-regions [_ [x y w h]]
-    (let [ch (int (/ h (count content)))]
-      (map-indexed
-       (fn [i child] [[x (+ y (* i ch)) w ch] child])
-       content)))
+    (let [ch (/ h (count content))]
+      (map-indexed (fn [i child] [[x (+ y (int (* i ch))) w ch] child])
+                   content)))
   element/Sized
   (size [_ area] area)
   Object
   (toString [_] (str "#trudy.layout/vbox " (pr-str (vec content)))))
+
+(defn- center-child [[cw ch] [x y w h]]
+  [(int (+ x (- (/ w 2) (/ cw 2))))
+   (int (+ y (- (/ h 2) (/ ch 2))))])
 
 (defrecord Center [content]
   Layout
   (child-regions [_ [x y w h]]
     (for [child content]
       (let [[cw ch] (element/size child [w h])
-            cx      (int (+ x (- (/ w 2) (/ cw 2))))
-            cy      (int (+ y (- (/ h 2) (/ ch 2))))]
+            [cx cy] (center-child [cw ch] [x y w h])]
         [[cx cy cw ch] child])))
   element/Sized
   (size [_ area] area)
