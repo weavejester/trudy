@@ -2,7 +2,8 @@
   "Create graphics window with Swing."
   (:require [trudy.graphics :as graphics])
   (:import [javax.swing JFrame JPanel]
-           [java.awt Dimension Canvas Color Graphics2D RenderingHints]))
+           [java.awt Canvas Component Dimension Graphics2D RenderingHints]
+           [java.awt.event ComponentListener]))
 
 (defn- canvas-size [^Canvas canvas]
   [(.getWidth canvas) (.getHeight canvas)])
@@ -36,3 +37,12 @@
       (.createBufferStrategy 2)
       (.setIgnoreRepaint true)
       (.requestFocus))))
+
+(defn on-resize [^Component component callback]
+  (.addComponentListener
+   component
+   (reify ComponentListener
+     (componentHidden [_ _])
+     (componentShown [_ _])
+     (componentMoved [_ _])
+     (componentResized [_ _] (callback)))))
