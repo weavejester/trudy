@@ -48,4 +48,8 @@
 
   trudy.layout.Center
   (render [layout graphics region]
+    (render-layout layout graphics region))
+
+  trudy.layout.Inline
+  (render [layout graphics region]
     (render-layout layout graphics region)))
