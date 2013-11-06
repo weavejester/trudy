@@ -20,9 +20,8 @@
 
 (defn ^AttributedString attributed-string
   "Create an AttributedString from a string of text and a font."
-  [text {:keys [family size]}]
-  (AttributedString. text {TextAttribute/FONT (awt-font family)
-                           TextAttribute/SIZE (float size)}))
+  [text font]
+  (AttributedString. text {TextAttribute/FONT (awt-font font)}))
 
 (defn- ^LineBreakMeasurer line-break-measurer [text font]
   (LineBreakMeasurer.
@@ -33,8 +32,7 @@
   (.nextLayout lbm width)
   (.getPosition lbm))
 
-(defn- line-breaks
-  [text font width]
+(defn- line-breaks [text font width]
   (let [lbm (line-break-measurer text font)
         len (count text)]
     (->> (repeatedly #(next-break lbm width))
