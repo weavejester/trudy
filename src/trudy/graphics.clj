@@ -29,9 +29,14 @@
 
 (extend-protocol Renderable
   trudy.ui.Text
-  (render [text graphics [x y _ _]]
-    (set-color graphics (:color text))
-    (draw-text graphics (:content text) (:font text) [x y]))
+  (render [{:keys [content font color]} graphics [x y w _]]
+    (set-color graphics color)
+    (let [lines   (font/split-text content font w)
+          sizes   (map #(font/text-size % font) lines)
+          heights (map second sizes)
+          ys      (reductions + y heights)]
+      (doseq [[line y] (map vector lines ys)]
+        (draw-text graphics line font [x y]))))
 
   trudy.ui.Rect
   (render [rect graphics [x y w h]]
