@@ -4,6 +4,7 @@
            [java.awt.image BufferedImage])
   (:require [crumpets.core :as color]
             [trudy.layout :as layout]
+            [trudy.effect :as effect]
             [trudy.font :as font]
             trudy.ui))
 
@@ -45,9 +46,17 @@
     (doseq [[line y] (map vector lines baselines)]
       (draw-line graphics line font [x0 y]))))
 
+(defn- draw-image [^Graphics2D graphics image [x y w h]]
+  (.drawImage graphics image x y w h nil))
+
 (defn- render-layout [layout graphics region]
   (doseq [[region child] (layout/child-regions layout region)]
     (render child graphics region)))
+
+(defn- render-effect [effect graphics [x y w h]]
+  (let [buffer (buffered-image [w h])]
+    (paint buffer (first (:content effect)))
+    (draw-image graphics (effect/apply-effect effect buffer) [x y w h])))
 
 (extend-protocol Renderable
   trudy.ui.Text
@@ -70,4 +79,8 @@
 
   trudy.layout.Center
   (render [layout graphics region]
-    (render-layout layout graphics region)))
+    (render-layout layout graphics region))
+
+  trudy.effect.Blur
+  (render [effect graphics region]
+    (render-effect effect graphics region)))
