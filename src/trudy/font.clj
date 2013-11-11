@@ -61,6 +61,10 @@
      :bounds [(.getWidth bounds)
               (.getHeight bounds)]}))
 
+(defn- line-metrics [text font width]
+  (let [lines   (split-text text font width)]
+    (map #(text-metrics % font) lines)))
+
 (defn- line-height [metrics]
   (+ (:ascent metrics) (:descent metrics)))
 
@@ -68,9 +72,16 @@
   "Find the width and height of a given string of text for a particular font and
   line width."
   [text font width]
-  (let [lines   (split-text text font width)
-        metrics (map #(text-metrics % font) lines)]
+  (let [metrics (line-metrics text font width)]
     [(int (apply max (map :visible-advance metrics)))
      (int (+ (apply + (map line-height metrics))
              (apply + (map :leading (butlast metrics)))))]))
 
+(defn text-baselines
+  "Find the vertical positions of the baselines of a string of text for a given
+  font and line width."
+  [text font width]
+  (let [metrics (line-metrics text font width)]
+    (->> (partition 2 1 metrics)
+         (map (fn [[a b]] (+ (:descent a) (:leading a) (:ascent b))))
+         (reductions + (:ascent (first metrics))))))

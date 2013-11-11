@@ -18,10 +18,15 @@
 (defn- set-color [^Graphics2D graphics color]
   (.setColor graphics (color/awt-color color)))
 
-(defn- draw-text [^Graphics2D graphics content font [x y]]
-  (let [[w h] (font/text-size content font)]
-    (.setFont graphics (font/awt-font font))
-    (.drawString graphics content x (+ y h))))
+(defn- draw-line [^Graphics2D graphics content font [x y]]
+  (.setFont graphics (font/awt-font font))
+  (.drawString graphics content (int x) (int y)))
+
+(defn- draw-text [graphics content font [x0 y0 w _]]
+  (let [lines     (font/split-text content font w)
+        baselines (font/text-baselines content font w)]
+    (doseq [[line y] (map vector lines baselines)]
+      (draw-line graphics line font [x0 y]))))
 
 (defn- render-layout [layout graphics region]
   (doseq [[region child] (layout/child-regions layout region)]
@@ -29,14 +34,9 @@
 
 (extend-protocol Renderable
   trudy.ui.Text
-  (render [{:keys [content font color]} graphics [x y w _]]
+  (render [{:keys [content font color]} graphics region]
     (set-color graphics color)
-    (let [lines   (font/split-text content font w)
-          sizes   (map #(font/text-size % font) lines)
-          heights (map second sizes)
-          ys      (reductions + y heights)]
-      (doseq [[line y] (map vector lines ys)]
-        (draw-text graphics line font [x y]))))
+    (draw-text graphics content font region))
 
   trudy.ui.Rect
   (render [rect graphics [x y w h]]
