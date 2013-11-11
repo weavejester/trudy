@@ -46,12 +46,31 @@
          (partition 2 1)
          (map (fn [[s e]] (str/trim (subs text s e)))))))
 
-(defn text-size
-  "Find the width and height of a given string of text for a particular font."
+(defn text-metrics
+  "Return a map of the metrics of a text string rendered with the specified
+  font."
   [text font]
   (let [font   (awt-font font)
         layout (TextLayout. text font (font-render-context font))
         bounds (.getBounds layout)]
-    [(int (.getWidth bounds))
-     (int (.getHeight bounds))]))
+    {:advance (.getAdvance layout)
+     :ascent  (.getAscent layout)
+     :descent (.getDescent layout)
+     :leading (.getLeading layout)
+     :visible-advance (.getVisibleAdvance layout)
+     :bounds [(.getWidth bounds)
+              (.getHeight bounds)]}))
+
+(defn- line-height [metrics]
+  (+ (:ascent metrics) (:descent metrics)))
+
+(defn text-size
+  "Find the width and height of a given string of text for a particular font and
+  line width."
+  [text font width]
+  (let [lines   (split-text text font width)
+        metrics (map #(text-metrics % font) lines)]
+    [(int (apply max (map :visible-advance metrics)))
+     (int (+ (apply + (map line-height metrics))
+             (apply + (map :leading (butlast metrics)))))]))
 
