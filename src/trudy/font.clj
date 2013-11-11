@@ -50,7 +50,8 @@
   "Return a map of the metrics of a text string rendered with the specified
   font."
   [text font]
-  (let [font   (awt-font font)
+  (let [text   (if (str/blank? text) " " text)
+        font   (awt-font font)
         layout (TextLayout. text font (font-render-context font))
         bounds (.getBounds layout)]
     {:advance (.getAdvance layout)
@@ -62,7 +63,7 @@
               (.getHeight bounds)]}))
 
 (defn- line-metrics [text font width]
-  (let [lines   (split-text text font width)]
+  (let [lines (split-text text font width)]
     (map #(text-metrics % font) lines)))
 
 (defn- line-height [metrics]

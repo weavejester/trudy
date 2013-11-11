@@ -6,7 +6,7 @@
 
 (defrecord Text [content color font]
   element/Sized
-  (size [_ _] (font/text-size content font))
+  (size [_ [w h]] (font/text-size content font w))
   Object
   (toString [r] (str "#trudy.ui/text " (pr-str (into {} r)))))
 

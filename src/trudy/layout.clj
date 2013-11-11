@@ -1,7 +1,6 @@
 (ns trudy.layout
   (:require [trudy.element :as element]
-            [trudy.macros :refer (set-print-methods!)]
-            [medley.core :refer (greatest)]))
+            [trudy.macros :refer (set-print-methods!)]))
 
 (defprotocol Layout
   (child-regions [layout parent-region]))
@@ -12,16 +11,36 @@
     (for [child content] [region child]))
   element/Sized
   (size [_ area]
-    (greatest (map #(element/size % area) content)))
+    (let [sizes (map #(element/size % area) content)]
+      [(apply max (map first sizes))
+       (apply max (map second sizes))]))
   Object
   (toString [_] (str "#trudy.layout/overlay " (pr-str (vec content)))))
+
+(defn- minima [f start end]
+  (if (= start end)
+    start
+    (let [step (int (/ (- end start) 2))]
+      (if (< (f start) (f end))
+        (recur f start (+ start step))
+        (recur f (- end step) end)))))
+
+(defn- box-optimum [elements sizef target]
+  (letfn [(total-size [x]  (apply + (map #(sizef % x) elements)))
+          (overflow [size] (Math/abs (- target size)))]
+    (minima (comp overflow total-size) 0 target)))
 
 (defrecord VBox [content]
   Layout
   (child-regions [_ [x y w h]]
-    (let [ch (/ h (count content))]
-      (map-indexed (fn [i child] [[x (+ y (int (* i ch))) w ch] child])
-                   content)))
+    (let [sizef   #(second (element/size %1 [w %2]))
+          optimum (box-optimum content sizef h)
+          heights (map #(sizef % optimum) content)
+          offsets (reductions + y heights)]
+      (map (fn [child y h] [[x y w h] child])
+           content
+           offsets
+           heights)))
   element/Sized
   (size [_ area] area)
   Object
