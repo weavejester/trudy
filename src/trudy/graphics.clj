@@ -1,6 +1,7 @@
 (ns trudy.graphics
   (:import [java.awt Font Graphics2D RenderingHints]
-           [java.awt.font FontRenderContext TextLayout])
+           [java.awt.font FontRenderContext TextLayout]
+           [java.awt.image BufferedImage])
   (:require [crumpets.core :as color]
             [trudy.layout :as layout]
             [trudy.font :as font]
@@ -11,6 +12,16 @@
 
 (defprotocol Canvas
   (paint* [canvas painter]))
+
+(defn buffered-image
+  "Create a blank BufferedImage instance of the supplied dimentions."
+  [[width height]]
+  (BufferedImage. (int width) (int height) BufferedImage/TYPE_INT_ARGB))
+
+(extend-type BufferedImage
+  Canvas
+  (paint* [image painter]
+    (painter (.getGraphics image) [(.getWidth image) (.getHeight image)])))
 
 (defn- set-font-hints! [^Graphics2D g]
   (.setRenderingHint g RenderingHints/KEY_TEXT_ANTIALIASING
