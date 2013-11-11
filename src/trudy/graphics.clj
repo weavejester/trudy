@@ -1,5 +1,5 @@
 (ns trudy.graphics
-  (:import [java.awt Font Graphics2D]
+  (:import [java.awt Font Graphics2D RenderingHints]
            [java.awt.font FontRenderContext TextLayout])
   (:require [crumpets.core :as color]
             [trudy.layout :as layout]
@@ -12,8 +12,14 @@
 (defprotocol Canvas
   (paint* [canvas painter]))
 
+(defn- set-font-hints! [^Graphics2D g]
+  (.setRenderingHint g RenderingHints/KEY_TEXT_ANTIALIASING
+                       RenderingHints/VALUE_TEXT_ANTIALIAS_ON))
+
 (defn paint [canvas entity]
-  (paint* canvas (fn [g [w h]] (render entity g [0 0 w h]))))
+  (paint* canvas (fn [g [w h]]
+                   (set-font-hints! g)
+                   (render entity g [0 0 w h]))))
 
 (defn- set-color [^Graphics2D graphics color]
   (.setColor graphics (color/awt-color color)))
