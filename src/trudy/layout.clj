@@ -1,48 +1,48 @@
 (ns trudy.layout
   (:require [trudy.element :as element]
+            [trudy.size :as size]
             [trudy.macros :refer (set-print-methods!)]))
 
 (defprotocol Layout
   (child-regions [layout parent-region]))
+
+(defn- child-bounds [bounds children]
+  (map #(element/size % bounds) children))
+
+(defn- min-fit [bounds]
+  (size/min (size/fit bounds)))
+
+(defn- overlay-size [bounds children]
+  (let [sizes (child-bounds bounds children)]
+    [(min-fit (map first sizes))
+     (min-fit (map second sizes))]))
 
 (defrecord Overlay [content]
   Layout
   (child-regions [_ region]
     (for [child content] [region child]))
   element/Sized
-  (size [_ area]
-    (let [sizes (map #(element/size % area) content)]
-      [(apply max (map first sizes))
-       (apply max (map second sizes))]))
+  (size [_ bounds]
+    (overlay-size bounds content))
   Object
   (toString [_] (str "#trudy.layout/overlay " (pr-str (vec content)))))
 
-(defn- minima [f start end]
-  (if (= start end)
-    start
-    (let [step (int (/ (- end start) 2))]
-      (if (< (f start) (f end))
-        (recur f start (+ start step))
-        (recur f (- end step) end)))))
-
-(defn- box-optimum [elements sizef target]
-  (letfn [(total-size [x]  (apply + (map #(sizef % x) elements)))
-          (overflow [size] (Math/abs (- target size)))]
-    (minima (comp overflow total-size) 0 target)))
+(defn- vbox-heights [children w h]
+  (let [bounds [w (size/range 1 h)]
+        sizes  (child-bounds bounds children)]
+    (size/pack (map second sizes) h)))
 
 (defrecord VBox [content]
   Layout
   (child-regions [_ [x y w h]]
-    (let [sizef   #(second (element/size %1 [w %2]))
-          optimum (box-optimum content sizef h)
-          heights (map #(sizef % optimum) content)
-          offsets (reductions + y heights)]
-      (map (fn [child y h] [[x y w h] child])
+    (let [heights (vbox-heights content w h)
+          offsets (reductions + 0 heights)]
+      (map (fn [c h y] [[x y w h] c])
            content
-           offsets
-           heights)))
+           heights
+           offsets)))
   element/Sized
-  (size [_ area] area)
+  (size [_ bounds] bounds)
   Object
   (toString [_] (str "#trudy.layout/vbox " (pr-str (vec content)))))
 
@@ -54,11 +54,12 @@
   Layout
   (child-regions [_ [x y w h]]
     (for [child content]
-      (let [[cw ch] (element/size child [w h])
+      (let [[cw ch] (map size/min (element/size child [w h]))
             [cx cy] (center-child [cw ch] [x y w h])]
         [[cx cy cw ch] child])))
   element/Sized
-  (size [_ area] area)
+  (size [_ bounds]
+    (overlay-size bounds content))
   Object
   (toString [_] (str "#trudy.layout/center " (pr-str (vec content)))))
 

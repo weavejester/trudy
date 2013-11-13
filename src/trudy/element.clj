@@ -2,4 +2,4 @@
   "Protocols for describing elements.")
 
 (defprotocol Sized
-  (size [element area]))
+  (size [element bounds]))
