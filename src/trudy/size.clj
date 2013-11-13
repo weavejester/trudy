@@ -32,15 +32,16 @@
 (defn within? [bounds x]
   (<= (min bounds) x (max bounds)))
 
-(defn- grow [value bounds]
-  (if (< value (max bounds))
-    (inc value)
-    value))
+(defn- grow [values bounds]
+  (if-let [[v & vs] (seq values)]
+    (if (< v (max (first bounds)))
+      (cons (inc v) vs)
+      (lazy-seq (cons v (grow vs (rest bounds)))))))
 
 (defn pack [bounds target]
   (let [maximum (apply + (map max bounds))]
     (loop [values (map min bounds)]
       (let [sum (apply + values)]
         (if (and (< sum maximum) (< sum target))
-          (recur (map grow values bounds))
+          (recur (grow values bounds))
           values)))))
