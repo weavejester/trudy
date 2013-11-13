@@ -49,6 +49,10 @@
           (recur (grow values bounds))
           values)))))
 
-(defn fit [bounds]
+(defn overlay [bounds]
   (range (apply core/max (map min bounds))
          (apply core/max (map max bounds))))
+
+(defn series [bounds]
+  (range (apply + (map min bounds))
+         (apply + (map max bounds))))

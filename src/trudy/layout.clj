@@ -9,13 +9,10 @@
 (defn- child-bounds [bounds children]
   (map #(element/size % bounds) children))
 
-(defn- min-fit [bounds]
-  (size/min (size/fit bounds)))
-
 (defn- overlay-size [bounds children]
   (let [sizes (child-bounds bounds children)]
-    [(min-fit (map first sizes))
-     (min-fit (map second sizes))]))
+    [(size/overlay (map first sizes))
+     (size/overlay (map second sizes))]))
 
 (defrecord Overlay [content]
   Layout
@@ -42,7 +39,10 @@
            heights
            offsets)))
   element/Sized
-  (size [_ bounds] bounds)
+  (size [_ bounds]
+    (let [sizes (child-bounds bounds content)]
+      [(size/overlay (map first sizes))
+       (size/series (map second sizes))]))
   Object
   (toString [_] (str "#trudy.layout/vbox " (pr-str (vec content)))))
 
