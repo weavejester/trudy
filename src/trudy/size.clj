@@ -21,6 +21,9 @@
 (defn range [start end]
   (Range. start end))
 
+(defn into-range [[start end]]
+  (range start end))
+
 (extend-type Number
   Bounds
   (min [x] x)
