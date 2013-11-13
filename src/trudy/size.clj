@@ -25,3 +25,9 @@
   Bounds
   (min [x] x)
   (max [x] x))
+
+(defn magnitude [bounds]
+  (- (max bounds) (min bounds)))
+
+(defn within? [bounds x]
+  (<= (min bounds) x (max bounds)))
