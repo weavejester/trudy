@@ -48,3 +48,7 @@
         (if (and (< sum maximum) (< sum target))
           (recur (grow values bounds))
           values)))))
+
+(defn fit [bounds]
+  (range (apply core/max (map min bounds))
+         (apply core/max (map max bounds))))
