@@ -35,19 +35,19 @@
 (defn within? [bounds x]
   (<= (min bounds) x (max bounds)))
 
-(defn- next-indexes [indexes bounds values]
-  (drop-while #(>= (values %) (max (bounds %))) indexes))
+(defn- next-index [bounds values]
+  (let [indexes (core/range (count values))]
+    (->> (map vector indexes bounds values)
+         (filter (fn [[_ b v]] (< v (max b))))
+         (sort-by peek)
+         (ffirst))))
 
 (defn pack [bounds target]
-  (let [bounds  (vec bounds)
-        maximum (apply + (mapv max bounds))
+  (let [maximum (apply + (map max bounds))
         target  (core/min target maximum)]
-    (loop [values  (mapv min bounds)
-           indexes (cycle (core/range (count bounds)))]
+    (loop [values (vec (map min bounds))]
       (if (< (apply + values) target)
-        (let [indexes (next-indexes indexes bounds values)]
-          (recur (update-in values [(first indexes)] inc)
-                 (next indexes)))
+        (recur (update-in values [(next-index bounds values)] inc))
         values))))
 
 (defn overlay [bounds]
