@@ -35,19 +35,20 @@
 (defn within? [bounds x]
   (<= (min bounds) x (max bounds)))
 
-(defn- grow [values bounds]
-  (if-let [[v & vs] (seq values)]
-    (if (< v (max (first bounds)))
-      (cons (inc v) vs)
-      (lazy-seq (cons v (grow vs (rest bounds)))))))
+(defn- next-indexes [indexes bounds values]
+  (drop-while #(>= (values %) (max (bounds %))) indexes))
 
 (defn pack [bounds target]
-  (let [maximum (apply + (map max bounds))]
-    (loop [values (map min bounds)]
-      (let [sum (apply + values)]
-        (if (and (< sum maximum) (< sum target))
-          (recur (grow values bounds))
-          values)))))
+  (let [bounds  (vec bounds)
+        maximum (apply + (mapv max bounds))
+        target  (core/min target maximum)]
+    (loop [values  (mapv min bounds)
+           indexes (cycle (core/range (count bounds)))]
+      (if (< (apply + values) target)
+        (let [indexes (next-indexes indexes bounds values)]
+          (recur (update-in values [(first indexes)] inc)
+                 (next indexes)))
+        values))))
 
 (defn overlay [bounds]
   (range (apply core/max (map min bounds))
