@@ -55,7 +55,7 @@
 
 (defn- render-effect [effect graphics [x y w h]]
   (let [buffer (buffered-image [w h])]
-    (paint buffer (first (:content effect)))
+    (paint buffer (:content effect))
     (draw-image graphics (effect/apply-effect effect buffer) [x y w h])))
 
 (extend-protocol Renderable

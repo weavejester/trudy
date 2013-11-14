@@ -1,22 +1,25 @@
 (ns trudy.effect
   "Visual effects that can be applied to elements."
   (:import [java.awt.image BufferedImage BufferedImageOp]
-           [com.jhlabs.image BlurFilter])
+           [com.jhlabs.image BoxBlurFilter])
   (:require [trudy.element :as element]
-            [trudy.macros :refer (set-print-methods!)]))
+            [trudy.macros :refer (set-print-methods!)]
+            [medley.core :refer (mapply)]))
 
 (defprotocol Effect
   (apply-effect [effect image]))
 
-(defrecord Blur [content]
+(defrecord Blur [radius content]
   Effect
-  (apply-effect [_ image] (.filter (BlurFilter.) image nil))
+  (apply-effect [blur image]
+    (let [[rx ry] radius]
+      (.filter (BoxBlurFilter. rx ry (:iterations blur 3)) image nil)))
   element/Sized
-  (size [_ area] (element/size (first content) area))
+  (size [_ area] (element/size content area))
   Object
-  (toString [r] (str "#trudy.effect/blur " (pr-str (vec content)))))
+  (toString [r] (str "#trudy.effect/blur " (pr-str (into {} r)))))
 
-(defn blur [& elements]
-  (Blur. (vec elements)))
+(defn blur [& {:as options}]
+  (map->Blur options))
 
 (set-print-methods! Blur)

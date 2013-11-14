@@ -5,6 +5,6 @@
  trudy.layout/vbox    trudy.layout/->VBox
  trudy.layout/center  trudy.layout/->Center
 
- trudy.effect/blur trudy.effect/->Blur
+ trudy.effect/blur trudy.effect/map->Blur
 
  range trudy.size/into-range}
