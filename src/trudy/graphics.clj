@@ -42,8 +42,10 @@
     (doseq [[line y] (map vector lines baselines)]
       (draw-line graphics line font [x0 y]))))
 
-(defn- draw-image [^Graphics2D graphics image [x y w h]]
-  (.drawImage graphics image x y w h nil))
+(defn- draw-image [^Graphics2D graphics image [x y _ _]]
+  (let [w (.getWidth image)
+        h (.getHeight image)]
+    (.drawImage graphics image x y w h nil)))
 
 (defn- render-layout [layout graphics region]
   (doseq [[region child] (layout/child-regions layout region)]
