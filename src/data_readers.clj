@@ -2,6 +2,7 @@
  trudy.ui/rect trudy.ui/map->Rect
  
  trudy.layout/overlay trudy.layout/->Overlay
+ trudy.layout/compact trudy.layout/->Compact
  trudy.layout/vbox    trudy.layout/->VBox
  trudy.layout/center  trudy.layout/->Center
 

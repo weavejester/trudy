@@ -24,6 +24,16 @@
   Object
   (toString [_] (str "#trudy.layout/overlay " (pr-str (vec content)))))
 
+(defrecord Compact [content]
+  Layout
+  (child-regions [_ region]
+    (for [child content] [region child]))
+  element/Sized
+  (size [_ bounds]
+    (mapv size/min (overlay-size bounds content)))
+  Object
+  (toString [_] (str "#trudy.layout/compact " (pr-str (vec content)))))
+
 (defn- vbox-heights [children w h]
   (let [bounds [w (size/range 1 h)]
         sizes  (child-bounds bounds children)]
@@ -66,6 +76,9 @@
 (defn overlay [& elements]
   (Overlay. (vec elements)))
 
+(defn compact [& elements]
+  (Compact. (vec elements)))
+
 (defn vbox [& elements]
   (VBox. (vec elements)))
 
@@ -73,5 +86,6 @@
   (Center. (vec elements)))
 
 (set-print-methods! Overlay)
+(set-print-methods! Compact)
 (set-print-methods! VBox)
 (set-print-methods! Center)
