@@ -6,18 +6,14 @@
             [trudy.layout :as layout]
             [trudy.effect :as effect]
             [trudy.font :as font]
-            trudy.ui))
+            [trudy.image :as img]
+            [trudy.ui :as ui]))
 
 (defprotocol Renderable
   (render [entity ^Graphics2D graphics region]))
 
 (defprotocol Canvas
   (paint* [canvas painter]))
-
-(defn buffered-image
-  "Create a blank BufferedImage instance of the supplied dimentions."
-  [[width height]]
-  (BufferedImage. (int width) (int height) BufferedImage/TYPE_INT_ARGB))
 
 (extend-type BufferedImage
   Canvas
@@ -54,7 +50,7 @@
     (render child graphics region)))
 
 (defn- render-effect [effect graphics [x y w h]]
-  (let [buffer (buffered-image [w h])]
+  (let [buffer (img/buffered-image [w h])]
     (paint buffer (:content effect))
     (draw-image graphics (effect/apply-effect effect buffer) [x y w h])))
 
@@ -68,6 +64,10 @@
   (render [rect graphics [x y w h]]
     (set-color graphics (:color rect))
     (.fillRect graphics x y w h))
+
+  trudy.ui.Image
+  (render [image graphics [x y w h]]
+    (draw-image graphics (img/read-image (:src image)) [x y w h]))
 
   trudy.layout.Layout
   (render [layout graphics region]
