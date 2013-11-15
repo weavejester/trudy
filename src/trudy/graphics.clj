@@ -69,19 +69,7 @@
     (set-color graphics (:color rect))
     (.fillRect graphics x y w h))
 
-  trudy.layout.Overlay
-  (render [layout graphics region]
-    (render-layout layout graphics region))
-
-  trudy.layout.Compact
-  (render [layout graphics region]
-    (render-layout layout graphics region))
-
-  trudy.layout.VBox
-  (render [layout graphics region]
-    (render-layout layout graphics region))
-
-  trudy.layout.Center
+  trudy.layout.Layout
   (render [layout graphics region]
     (render-layout layout graphics region))
 
