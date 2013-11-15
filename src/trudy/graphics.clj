@@ -1,7 +1,8 @@
 (ns trudy.graphics
   (:import [java.awt Font Graphics2D RenderingHints]
            [java.awt.font FontRenderContext TextLayout]
-           [java.awt.image BufferedImage])
+           [java.awt.image BufferedImage BufferedImageOp]
+           [com.jhlabs.image BoxBlurFilter])
   (:require [crumpets.core :as color]
             [trudy.layout :as layout]
             [trudy.effect :as effect]
@@ -51,10 +52,10 @@
   (doseq [[region child] (layout/child-regions layout region)]
     (render child graphics region)))
 
-(defn- render-effect [effect graphics [x y w h]]
+(defn- render-effect [element effect graphics [x y w h]]
   (let [buffer (img/buffered-image [w h])]
-    (paint buffer (:content effect))
-    (draw-image graphics (effect/apply-effect effect buffer) [x y w h])))
+    (paint buffer element)
+    (draw-image graphics (effect buffer) [x y w h])))
 
 (extend-protocol Renderable
   trudy.ui.Text
@@ -77,4 +78,8 @@
 
   trudy.effect.Blur
   (render [effect graphics region]
-    (render-effect effect graphics region)))
+    (let [[rx ry]    (:radius effect)
+          iterations (:iterations effect 3)]
+      (render-effect (:content effect)
+                     #(.filter (BoxBlurFilter. rx ry iterations) % nil)
+                     graphics region))))
