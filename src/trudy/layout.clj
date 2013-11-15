@@ -1,7 +1,6 @@
 (ns trudy.layout
   (:require [trudy.element :as element]
-            [trudy.size :as size]
-            [trudy.macros :refer (set-print-methods!)]))
+            [trudy.size :as size]))
 
 (defprotocol Layout
   (child-regions [layout parent-region]))
@@ -20,9 +19,7 @@
     (for [child content] [region child]))
   element/Sized
   (size [_ bounds]
-    (overlay-size bounds content))
-  Object
-  (toString [_] (str "#trudy.layout/overlay " (pr-str (vec content)))))
+    (overlay-size bounds content)))
 
 (defrecord Compact [content]
   Layout
@@ -30,9 +27,7 @@
     (for [child content] [region child]))
   element/Sized
   (size [_ bounds]
-    (mapv size/min (overlay-size bounds content)))
-  Object
-  (toString [_] (str "#trudy.layout/compact " (pr-str (vec content)))))
+    (mapv size/min (overlay-size bounds content))))
 
 (defn- vbox-heights [children w h]
   (let [bounds [w (size/range 1 h)]
@@ -52,9 +47,7 @@
   (size [_ bounds]
     (let [sizes (child-bounds bounds content)]
       [(size/overlay (map first sizes))
-       (size/series (map second sizes))]))
-  Object
-  (toString [_] (str "#trudy.layout/vbox " (pr-str (vec content)))))
+       (size/series (map second sizes))])))
 
 (defn- center-child [[cw ch] [x y w h]]
   [(int (+ x (- (/ w 2) (/ cw 2))))
@@ -69,9 +62,7 @@
         [[cx cy cw ch] child])))
   element/Sized
   (size [_ bounds]
-    (overlay-size bounds content))
-  Object
-  (toString [_] (str "#trudy.layout/center " (pr-str (vec content)))))
+    (overlay-size bounds content)))
 
 (defn overlay [& elements]
   (Overlay. (vec elements)))
@@ -84,8 +75,3 @@
 
 (defn center [& elements]
   (Center. (vec elements)))
-
-(set-print-methods! Overlay)
-(set-print-methods! Compact)
-(set-print-methods! VBox)
-(set-print-methods! Center)

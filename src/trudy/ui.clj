@@ -3,28 +3,22 @@
   (:require [trudy.element :as element]
             [trudy.font :as font]
             [trudy.size :as size]
-            [trudy.image :as img]
-            [trudy.macros :refer (set-print-methods!)]))
+            [trudy.image :as img]))
 
 (defrecord Text [content color font]
   element/Sized
-  (size [_ [w _]] (font/text-size content font (size/max w)))
-  Object
-  (toString [r] (str "#trudy.ui/text " (pr-str (into {} r)))))
+  (size [_ [w _]]
+    (font/text-size content font (size/max w))))
 
 (defrecord Image [src]
   element/Sized
   (size [image _]
     (let [i (img/read-image src)]
-      [(.getWidth i) (.getHeight i)]))
-  Object
-  (toString [r] (str "#trudy.ui/image " (pr-str (into {} r)))))
+      [(.getWidth i) (.getHeight i)])))
 
 (defrecord Rect [color]
   element/Sized
-  (size [_ bounds] bounds)
-  Object
-  (toString [r] (str "#trudy.ui/rect " (pr-str (into {} r)))))
+  (size [_ bounds] bounds))
 
 (defn text [& {:as options}]
   (map->Text options))
@@ -34,7 +28,3 @@
 
 (defn rect [& {:as options}]
   (map->Rect options))
-
-(set-print-methods! Text)
-(set-print-methods! Rect)
-(set-print-methods! Image)
