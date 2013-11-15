@@ -9,7 +9,8 @@
   [[width height]]
   (BufferedImage. (int width) (int height) BufferedImage/TYPE_INT_ARGB))
 
-(defn ^BufferedImage read-image
+(def ^BufferedImage read-image
   "Read an image from a source URL or file. Returns a BufferedImage instance."
-  [source]
-  (ImageIO/read (io/input-stream source)))
+  (memoize
+   (fn [source]
+     (ImageIO/read (io/input-stream source)))))
