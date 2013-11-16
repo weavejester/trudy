@@ -56,13 +56,11 @@
 (defrecord Center [content]
   Layout
   (child-regions [_ [x y w h]]
-    (for [child content]
-      (let [[cw ch] (map size/min (element/size child [w h]))
-            [cx cy] (center-child [cw ch] [x y w h])]
-        [[cx cy cw ch] child])))
+    (let [[cw ch] (mapv size/min (element/size content [w h]))
+          [cx cy] (center-child [cw ch] [x y w h])]
+      [[[cx cy cw ch] content]]))
   element/Sized
-  (size [_ bounds]
-    (overlay-size bounds content)))
+  (size [_ bounds] bounds))
 
 (defn overlay [& elements]
   (Overlay. (vec elements)))
@@ -73,5 +71,5 @@
 (defn vbox [& elements]
   (VBox. (vec elements)))
 
-(defn center [& elements]
-  (Center. (vec elements)))
+(defn center [element]
+  (Center. element))
