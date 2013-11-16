@@ -8,6 +8,8 @@
             [trudy.effect :as effect]
             [trudy.font :as font]
             [trudy.image :as img]
+            [trudy.size :as size]
+            [trudy.element :as element]
             [trudy.ui :as ui]))
 
 (defprotocol Renderable
@@ -52,9 +54,12 @@
   (doseq [[region child] (layout/child-regions layout region)]
     (render child graphics region)))
 
+(defn- paint-buffer [element size]
+  (doto (img/buffered-image size)
+    (paint element)))
+
 (defn- render-effect [element effect graphics [x y w h]]
-  (let [buffer (img/buffered-image [w h])]
-    (paint buffer element)
+  (let [buffer (paint-buffer element [w h])]
     (draw-image graphics (effect buffer) [x y w h])))
 
 (extend-protocol Renderable
@@ -82,4 +87,10 @@
           iterations (:iterations effect 3)]
       (render-effect (:content effect)
                      #(.filter (BoxBlurFilter. rx ry iterations) % nil)
-                     graphics region))))
+                     graphics region)))
+
+  trudy.effect.Scale
+  (render [{:keys [content]} ^Graphics2D graphics [x y w h]]
+    (let [size   (mapv size/min (element/size content [w h]))
+          buffer (paint-buffer content size)]
+      (.drawImage graphics buffer x y w h nil))))
