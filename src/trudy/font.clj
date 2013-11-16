@@ -69,14 +69,17 @@
 (defn- line-height [metrics]
   (+ (:ascent metrics) (:descent metrics)))
 
+(defn- ceil [x]
+  (int (Math/ceil x)))
+
 (defn text-size
   "Find the width and height of a given string of text for a particular font and
   line width."
   [text font width]
   (let [metrics (line-metrics text font width)]
-    [(int (apply max (map :visible-advance metrics)))
-     (int (+ (apply + (map line-height metrics))
-             (apply + (map :leading (butlast metrics)))))]))
+    [(ceil (apply max (map :visible-advance metrics)))
+     (ceil (+ (apply + (map line-height metrics))
+              (apply + (map :leading (butlast metrics)))))]))
 
 (defn text-baselines
   "Find the vertical positions of the baselines of a string of text for a given
