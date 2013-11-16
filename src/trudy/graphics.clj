@@ -43,7 +43,7 @@
   (let [lines     (font/split-text content font w)
         baselines (font/text-baselines content font w)]
     (doseq [[line y] (map vector lines baselines)]
-      (draw-line graphics line font [x0 y]))))
+      (draw-line graphics line font [x0 (+ y0 y)]))))
 
 (defn- draw-image [^Graphics2D graphics image [x y _ _]]
   (let [w (.getWidth image)
