@@ -11,7 +11,9 @@
   (min [_] start)
   (max [_] end)
   clojure.lang.Seqable
-  (seq [_] (core/range start end)))
+  (seq [_] (core/range start end))
+  Object
+  (toString [_] (str "#range " (pr-str [start end]))))
 
 (defn range [start end]
   (Range. start end))
