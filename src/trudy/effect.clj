@@ -2,7 +2,7 @@
   "Visual effects that can be applied to elements."
   (:require [trudy.element :as element]))
 
-(defrecord Blur [radius content]
+(defrecord Blur [content radius]
   element/Sized
   (size [_ bounds] (element/size content bounds)))
 
@@ -10,8 +10,8 @@
   element/Sized
   (size [_ bounds] bounds))
 
-(defn blur [& {:as options}]
-  (map->Blur options))
+(defn blur [content & {:as options}]
+  (map->Blur (assoc options :content content)))
 
 (defn scale [content]
   (Scale. content))
