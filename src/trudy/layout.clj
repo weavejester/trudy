@@ -62,6 +62,14 @@
   element/Sized
   (size [_ bounds] bounds))
 
+(defrecord Fixed [content size]
+  Layout
+  (child-regions [_ [x y _ _]]
+    (let [[w h] size]
+      [[[x y w h] content]]))
+  element/Sized
+  (size [_ _] size))
+
 (defrecord Padding [content padding]
   Layout
   (child-regions [_ [x y w h]]
@@ -85,6 +93,9 @@
 
 (defn center [element]
   (Center. element))
+
+(defn fixed [element size]
+  (Fixed. element size))
 
 (defn padding [element padding]
   (Padding. element padding))
