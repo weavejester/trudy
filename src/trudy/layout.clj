@@ -36,10 +36,10 @@
 
 (defrecord VBox [content]
   Layout
-  (child-regions [_ [x y w h]]
+  (child-regions [_ [x0 y0 w h]]
     (let [heights (vbox-heights content w h)
           offsets (reductions + 0 heights)]
-      (map (fn [c h y] [[x y w h] c])
+      (map (fn [c h y] [[x0 (+ y0 y) w h] c])
            content
            heights
            offsets)))
