@@ -4,10 +4,15 @@
   (:import [javax.imageio ImageIO]
            [java.awt.image BufferedImage]))
 
-(defn buffered-image
+(defn ^BufferedImage buffered-image
   "Create a blank BufferedImage instance of the supplied dimentions."
   [[width height]]
   (BufferedImage. (int width) (int height) BufferedImage/TYPE_INT_ARGB))
+
+(defn size
+  "Return the width and height of an image."
+  [^BufferedImage image]
+  [(.getWidth image) (.getHeight image)])
 
 (def ^BufferedImage read-image
   "Read an image from a source URL or file. Returns a BufferedImage instance."
