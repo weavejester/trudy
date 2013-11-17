@@ -49,3 +49,13 @@
 (defn series [bounds]
   (range (apply + (map min bounds))
          (apply + (map max bounds))))
+
+(defn add [bounds x]
+  (let [mn (+ (min bounds) x)
+        mx (+ (max bounds) x)]
+    (if (= mn mx)
+      mx
+      (range mn mx))))
+
+(defn sub [bounds x]
+  (add bounds (- x)))

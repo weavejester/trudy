@@ -62,6 +62,18 @@
   element/Sized
   (size [_ bounds] bounds))
 
+(defrecord Padding [content padding]
+  Layout
+  (child-regions [_ [x y w h]]
+    (let [[t r b l] padding]
+      [[[(+ x l) (+ y t) (- w l r) (- h t b)] content]]))
+  element/Sized
+  (size [_ bounds]
+    (let [[t r b l] padding
+          [w h]     (element/size content bounds)]
+      [(-> w (size/add r) (size/add l))
+       (-> h (size/add t) (size/add b))])))
+
 (defn overlay [& elements]
   (Overlay. (vec elements)))
 
@@ -73,3 +85,6 @@
 
 (defn center [element]
   (Center. element))
+
+(defn padding [element padding]
+  (Padding. element padding))
